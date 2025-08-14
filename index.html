@@ -84,7 +84,7 @@
       min-height: 1.2em;
     }
 
-    /* --- Profile & Homework View (NEW DESIGN) --- */
+    /* --- Profile & Homework View --- */
     #profile {
       display: none;
     }
@@ -95,7 +95,7 @@
       justify-content: space-between;
       gap: 1.5rem;
       margin-bottom: 2rem;
-      background-color: #f1f3f9; /* Light purple-blue background */
+      background-color: #f1f3f9;
       padding: 1.5rem;
       border-radius: 12px;
     }
@@ -128,7 +128,6 @@
       color: #1a237e;
     }
 
-    /* New style for points text */
     .points-text {
         margin: 0;
         font-size: 1.8rem;
@@ -138,7 +137,15 @@
     }
 
     .points-text #display-points {
-        color: #3949ab; /* Highlight color for the number */
+        color: #3949ab;
+    }
+
+    .date-display {
+        font-size: 0.95rem;
+        color: #5c6bc0;
+        margin-top: 0.75rem;
+        margin-bottom: 0;
+        font-weight: 500;
     }
 
 
@@ -176,12 +183,24 @@
       font-weight: 700;
       font-size: 1.1rem;
       color: #3949ab;
-      margin-bottom: 0.5rem;
+      margin-bottom: 0.25rem; /* Adjusted margin */
     }
 
     .homework-detail {
       font-size: 0.95rem;
       color: #555;
+      margin-bottom: 0.75rem; /* Added margin */
+    }
+
+    /* --- NEW: Style for Due Date --- */
+    .homework-due-date {
+        font-size: 0.9rem;
+        font-weight: 700;
+        color: #d32f2f; /* Red color for emphasis */
+        text-align: right;
+        border-top: 1px solid #eee;
+        padding-top: 0.5rem;
+        margin-top: 0.5rem;
     }
 
     /* --- MOBILE RESPONSIVE --- */
@@ -200,7 +219,7 @@
       }
 
       .profile-header {
-        flex-direction: column-reverse; /* Puts avatar on top */
+        flex-direction: column-reverse;
         align-items: center;
         gap: 1rem;
         padding: 1.2rem;
@@ -217,6 +236,10 @@
 
       .points-text {
           font-size: 1.6rem;
+      }
+     
+      .date-display {
+          text-align: center;
       }
 
       #avatar {
@@ -253,6 +276,7 @@
         <div class="profile-info">
             <h2>ยินดีต้อนรับ, <span id="display-name"></span></h2>
             <p class="points-text">คุณมี <span id="display-points">0</span> Points</p>
+            <p id="current-date" class="date-display"></p>
         </div>
         <img id="avatar" alt="Profile Picture">
       </div>
@@ -265,16 +289,24 @@
   </div>
 
   <script>
-    // Google Sheets URLs
-    // **IMPORTANT**: Your users sheet still needs a 4th column for points.
-    // Col A: username, Col B: password, Col C: profile_url, Col D: points
+    // --- Google Sheets URLs ---
+    // User Sheet: Needs 4 columns (username, password, profile_url, points)
     const usersSheet = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSjdvYVUD34lHhx44PXXxqyOhYOFy6H8fPiPF4ighex8pFjWyspdaLROmqB1yC8Fd18JaTD_uo34Z_U/pub?gid=0&single=true&output=csv";
+    // Homework Sheet: Needs 3 columns (subject, details, due_date)
     const homeworkSheet = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRRKZiNP02vpnUaCuxcY3j47o4muQxQcfKfvzBn_ZJ1p4Y5Zr2Kwkn7rYJbjPwuj9FrgrKy3Twgk7uJ/pub?gid=0&single=true&output=csv";
 
     async function getSheetData(url) {
       const res = await fetch(url);
       const data = await res.text();
-      return data.trim().split("\n").map(row => row.split(",").map(cell => cell.trim()));
+      // Added filter to remove empty rows from CSV
+      return data.trim().split("\n").filter(row => row.trim() !== "").map(row => row.split(",").map(cell => cell.trim()));
+    }
+
+    function displayCurrentDate() {
+      const dateElement = document.getElementById("current-date");
+      const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+      const thaiDate = new Date().toLocaleDateString('th-TH', options);
+      dateElement.innerHTML = `🗓️ ${thaiDate}`;
     }
 
     async function login() {
@@ -306,7 +338,10 @@
           document.getElementById("display-name").textContent = foundUser.username;
           document.getElementById("avatar").src = foundUser.profile;
           document.getElementById("display-points").textContent = foundUser.points;
+          
+          displayCurrentDate(); 
           loadHomework();
+
         } else {
           messageEl.textContent = "Username หรือ Password ไม่ถูกต้อง";
         }
@@ -323,7 +358,7 @@
         const listContainer = document.querySelector("#homework-list");
         listContainer.innerHTML = "";
 
-        if (hwRows.length === 0 || (hwRows.length === 1 && !hwRows[0][0])) {
+        if (hwRows.length === 0) {
           const noData = document.createElement("div");
           noData.textContent = "🎉 ไม่มีข้อมูลการบ้านในขณะนี้";
           noData.style.textAlign = "center";
@@ -333,12 +368,16 @@
         }
 
         hwRows.forEach(r => {
-          if (r[0] && r[1]) {
+          // Check if all 3 columns (subject, detail, due date) exist
+          if (r[0] && r[1] && r[2]) { 
             const card = document.createElement("div");
             card.classList.add("homework-card");
+
+            // *** MODIFIED: Added homework-due-date element ***
             card.innerHTML = `
               <div class="homework-title">${r[0]}</div>
               <div class="homework-detail">${r[1]}</div>
+              <div class="homework-due-date">กำหนดส่ง: ${r[2]}</div>
             `;
             listContainer.appendChild(card);
           }
