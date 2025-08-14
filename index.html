@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login with Profile + Homework + Points</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    /* --- Global Styles --- */
+    body {
+      font-family: 'Sarabun', sans-serif;
+      background-color: #f0f2f5;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      color: #333;
+    }
+
+    .container {
+      background-color: #ffffff;
+      padding: 2rem 2.5rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 500px;
+      box-sizing: border-box;
+      transition: all 0.3s ease;
+    }
+
+    h2, h3 {
+      color: #1a237e;
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+
+    /* --- Login Form --- */
+    #login-form .form-group {
+      margin-bottom: 1rem;
+    }
+
+    input[type="text"],
+    input[type="password"] {
+      width: 100%;
+      padding: 12px 15px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      box-sizing: border-box;
+      font-size: 1rem;
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+
+    input[type="text"]:focus,
+    input[type="password"]:focus {
+      outline: none;
+      border-color: #3949ab;
+      box-shadow: 0 0 5px rgba(57, 73, 171, 0.3);
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background-color: #3949ab;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 1.1rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    button:hover {
+      background-color: #283593;
+    }
+
+    #message {
+      color: #d32f2f;
+      text-align: center;
+      margin-top: 1rem;
+      min-height: 1.2em;
+    }
+
+    /* --- Profile & Homework View (NEW DESIGN) --- */
+    #profile {
+      display: none;
+    }
+
+    .profile-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+      background-color: #f1f3f9; /* Light purple-blue background */
+      padding: 1.5rem;
+      border-radius: 12px;
+    }
+
+    #avatar {
+      border-radius: 50%;
+      border: 3px solid #ffffff;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+      width: 100px;
+      height: 100px;
+      object-fit: cover;
+      flex-shrink: 0;
+    }
+    
+    .profile-info {
+        flex-grow: 1;
+    }
+
+    #profile h2 {
+      margin-top: 0;
+      margin-bottom: 0.25rem;
+      text-align: left;
+      font-size: 1.2rem;
+      font-weight: 500;
+      color: #555;
+    }
+
+    #display-name {
+      font-weight: 700;
+      color: #1a237e;
+    }
+
+    /* New style for points text */
+    .points-text {
+        margin: 0;
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: #333;
+        line-height: 1.2;
+    }
+
+    .points-text #display-points {
+        color: #3949ab; /* Highlight color for the number */
+    }
+
+
+    /* --- Homework Box Style --- */
+    #homework h3 {
+      text-align: left;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid #3949ab;
+      display: inline-block;
+      margin-bottom: 1rem;
+    }
+
+    .homework-container {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .homework-card {
+      background-color: #ffffff;
+      border: 1px solid #ddd;
+      border-left: 6px solid #3949ab;
+      border-radius: 8px;
+      padding: 1rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .homework-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    .homework-title {
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: #3949ab;
+      margin-bottom: 0.5rem;
+    }
+
+    .homework-detail {
+      font-size: 0.95rem;
+      color: #555;
+    }
+
+    /* --- MOBILE RESPONSIVE --- */
+    @media (max-width: 576px) {
+      body {
+        align-items: flex-start;
+        background-color: #ffffff;
+      }
+
+      .container {
+        max-width: 100%;
+        min-height: 100vh;
+        padding: 2rem 1.5rem;
+        border-radius: 0;
+        box-shadow: none;
+      }
+
+      .profile-header {
+        flex-direction: column-reverse; /* Puts avatar on top */
+        align-items: center;
+        gap: 1rem;
+        padding: 1.2rem;
+      }
+      
+      .profile-info {
+          width: 100%;
+          text-align: center;
+      }
+      #profile h2 {
+          text-align: center;
+          font-size: 1.1rem;
+      }
+
+      .points-text {
+          font-size: 1.6rem;
+      }
+
+      #avatar {
+        width: 90px;
+        height: 90px;
+      }
+
+      .homework-card {
+        padding: 0.8rem;
+      }
+
+      .homework-title {
+        font-size: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div id="login-form">
+      <h2>เข้าสู่ระบบ</h2>
+      <div class="form-group">
+        <input type="text" id="username" placeholder="ชื่อผู้ใช้ (Username)">
+      </div>
+      <div class="form-group">
+        <input type="password" id="password" placeholder="รหัสผ่าน (Password)">
+      </div>
+      <button onclick="login()">Login</button>
+      <p id="message"></p>
+    </div>
+
+    <div id="profile">
+      <div class="profile-header">
+        <div class="profile-info">
+            <h2>ยินดีต้อนรับ, <span id="display-name"></span></h2>
+            <p class="points-text">คุณมี <span id="display-points">0</span> Points</p>
+        </div>
+        <img id="avatar" alt="Profile Picture">
+      </div>
+
+      <div id="homework">
+        <h3>📚 แจ้งการบ้าน</h3>
+        <div id="homework-list" class="homework-container"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Google Sheets URLs
+    // **IMPORTANT**: Your users sheet still needs a 4th column for points.
+    // Col A: username, Col B: password, Col C: profile_url, Col D: points
+    const usersSheet = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSjdvYVUD34lHhx44PXXxqyOhYOFy6H8fPiPF4ighex8pFjWyspdaLROmqB1yC8Fd18JaTD_uo34Z_U/pub?gid=0&single=true&output=csv";
+    const homeworkSheet = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRRKZiNP02vpnUaCuxcY3j47o4muQxQcfKfvzBn_ZJ1p4Y5Zr2Kwkn7rYJbjPwuj9FrgrKy3Twgk7uJ/pub?gid=0&single=true&output=csv";
+
+    async function getSheetData(url) {
+      const res = await fetch(url);
+      const data = await res.text();
+      return data.trim().split("\n").map(row => row.split(",").map(cell => cell.trim()));
+    }
+
+    async function login() {
+      const user = document.getElementById("username").value.trim();
+      const pass = document.getElementById("password").value.trim();
+      const messageEl = document.getElementById("message");
+
+      if (!user || !pass) {
+        messageEl.textContent = "กรุณากรอก Username และ Password";
+        return;
+      }
+
+      messageEl.textContent = "กำลังตรวจสอบข้อมูล...";
+
+      try {
+        const sheetData = await getSheetData(usersSheet);
+        const rows = sheetData.slice(1);
+        let foundUser = null;
+        for (let r of rows) {
+          if (r[0] === user && r[1] === pass) {
+            foundUser = { username: r[0], profile: r[2], points: r[3] || '0' };
+            break;
+          }
+        }
+
+        if (foundUser) {
+          document.getElementById("login-form").style.display = "none";
+          document.getElementById("profile").style.display = "block";
+          document.getElementById("display-name").textContent = foundUser.username;
+          document.getElementById("avatar").src = foundUser.profile;
+          document.getElementById("display-points").textContent = foundUser.points;
+          loadHomework();
+        } else {
+          messageEl.textContent = "Username หรือ Password ไม่ถูกต้อง";
+        }
+      } catch (error) {
+        console.error("Login error:", error);
+        messageEl.textContent = "เกิดข้อผิดพลาดในการเชื่อมต่อ";
+      }
+    }
+
+    async function loadHomework() {
+      try {
+        const hwData = await getSheetData(homeworkSheet);
+        const hwRows = hwData.slice(1);
+        const listContainer = document.querySelector("#homework-list");
+        listContainer.innerHTML = "";
+
+        if (hwRows.length === 0 || (hwRows.length === 1 && !hwRows[0][0])) {
+          const noData = document.createElement("div");
+          noData.textContent = "🎉 ไม่มีข้อมูลการบ้านในขณะนี้";
+          noData.style.textAlign = "center";
+          noData.style.color = "#555";
+          listContainer.appendChild(noData);
+          return;
+        }
+
+        hwRows.forEach(r => {
+          if (r[0] && r[1]) {
+            const card = document.createElement("div");
+            card.classList.add("homework-card");
+            card.innerHTML = `
+              <div class="homework-title">${r[0]}</div>
+              <div class="homework-detail">${r[1]}</div>
+            `;
+            listContainer.appendChild(card);
+          }
+        });
+      } catch(error) {
+        console.error("Homework loading error:", error);
+        const listContainer = document.querySelector("#homework-list");
+        listContainer.innerHTML = `<div style="text-align:center; color: #d32f2f;">เกิดข้อผิดพลาดในการโหลดข้อมูลการบ้าน</div>`;
+      }
+    }
+  </script>
+</body>
+</html>
